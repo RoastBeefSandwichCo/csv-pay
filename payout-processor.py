@@ -5,6 +5,8 @@ import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Send payments using CSV database')
+    parser.add_argument('daemon', metavar='daemon', type=str,
+                       help='use this *coind')
     parser.add_argument('-f', '--infile', metavar='filename', type=str,
                        help='CSV to read')
     parser.add_argument('-a', '--amount', metavar='amount', type=float,
@@ -26,9 +28,9 @@ def parse_csv(csv_line, index):
     return address
 
 
-def send_payout(address, amount):
+def send_payout(daemon, address, amount):
     tx_id = ""
-    tx_id = subprocess.check_output(["evergreencoind", "sendtoaddress", str(address), str(amount), "faucet test" ]).strip()
+    tx_id = subprocess.check_output([daemon, "sendtoaddress", str(address), str(amount), "faucet test" ]).strip()
     print "address", address, "output:", tx_id
     return tx_id
 
@@ -36,6 +38,8 @@ def send_payout(address, amount):
 def main():
     args = parse_args()
     print "args:", args
+    daemon = args.daemon
+    print "daemon:", daemon
     input_filename = args.infile
     print "infile:", input_filename
     string_pieces = input_filename.partition(".")
@@ -67,7 +71,7 @@ def main():
                     completed_payouts.write(payout_log_string)
                 continue
 
-            tx_id = send_payout(parse_csv(each, index_of_address), amount) #send the payout, get txid
+            tx_id = send_payout(daemon, parse_csv(each, index_of_address), amount) #send the payout, get txid
             payout_log_string = each + ',"' + tx_id + '"\r\n'#create new Row string
             with open (output_filename, 'a') as completed_payouts:
                 completed_payouts.write(payout_log_string) #log it to the new csv
