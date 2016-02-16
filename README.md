@@ -1,7 +1,7 @@
 # csv-pay
 crypto payouts from a csv file
 ##usage
-usage: payout-processor.py <daemon> <filename> <amount> <csv address column #> <debugging>
+usage: ``payout-processor.py <daemon> <filename> <amount> <csv address column #> <debugging>``
 
 daemon is required, the name of the binary (evergreencoind, for example)
 csv address columns are ZERO-INDEXED
