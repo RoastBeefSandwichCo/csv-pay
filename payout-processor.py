@@ -4,7 +4,7 @@ import subprocess
 import argparse
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Send payments using CSV database')
+    parser = argparse.ArgumentParser(description='Send cryptocurrency payments using CSV database')
     parser.add_argument('daemon', metavar='daemon', type=str,
                        help='use this *coind')
     parser.add_argument('-f', '--infile', metavar='filename', type=str,
@@ -69,7 +69,13 @@ def main():
                 print "new columns:", payout_log_string 
                 with open (output_filename, 'w') as completed_payouts:
                     completed_payouts.write(payout_log_string)
+                #print "each.split:", each.split(","), each.lower()
+                print "count:", each.split(",").count('"address"')
+                if each.split(",").count('"address"') >=1:
+                    index_of_address = each.split(",").index('"address"')
+                    print "RESETTING ADDRESS TO MATCH COLUMN HEADER. NEW INDEX:", index_of_address
                 continue
+
 
             tx_id = send_payout(daemon, parse_csv(each, index_of_address), amount) #send the payout, get txid
             payout_log_string = each + ',"' + tx_id + '"\r\n'#create new Row string
